@@ -12,7 +12,7 @@ import authRoutes from "./routes/auth.route.js";
 import JobPostRoutes from "./routes/Job.Post.route.js";
 
  import mediaRoutes from "./routes/media.js";
- import artistListRoutes from "./routes/Artist.List.Route.js"
+ import artistListRoutes from "./routes/Artist.List.route.js"
  import artistBookingRoutes from "./routes/artistSide/Booking.route.js";
  import AdminRoutes from "./Admin_Backend/Admin.route.js"
  import ClientprofileRoutes from "./routes/Clientprofile.route.js"
