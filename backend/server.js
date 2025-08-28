@@ -22,6 +22,18 @@ import JobPostRoutes from "./routes/Job.Post.route.js";
 import ChatAppRoutes from "./ChatApp/route/Chat.route.js";
 import UserChatProfile from "./ChatApp/route/UserChatProfile.route.js"
 import { app, server } from "./ChatApp/lib/socket.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import matchRoutes from "./routes/artistSide/ArtistMatch.route.js";
+import contractRoutes from './routes/Contract.route.js';
+import geocodeRoute from "./routes/Geocode.js";
+import verifyRoutes from "./routes/admin/verify.route.js";
+import notificationRoutes from "./routes/Notification.route.js";
+import paymentRoutes from "./routes/Payment.route.js";
+import reviewRoutes from "./routes/Review.route.js";
+import recommendationRoutes from './routes/clientSide/Artist.Recom.route.js';
+import distanceRoutes from "./routes/distance.route.js";
+
 
 dotenv.config();
 
@@ -45,27 +57,21 @@ app.use("/api/media", mediaRoutes);
 app.use("/api/client/artists", artistListRoutes);
 app.use("/api/artist/bookings", artistBookingRoutes);
 app.use('/contracts', express.static('contracts'));
-import matchRoutes from "./routes/artistSide/ArtistMatch.route.js";
+
 app.use("/api", matchRoutes);
-import contractRoutes from './routes/Contract.route.js';
-import path from 'path';
+
+
 app.use('/api/contracts', contractRoutes);
 app.use('/contracts', express.static(path.join(process.cwd(), 'contracts')));
-import geocodeRoute from "./routes/Geocode.js";
 app.use("/api/geocode", geocodeRoute);
 app.use("/api/auth", AdminRoutes);
 app.use("/api/admin", AdminRoutes);
 app.use("/api/clientprofile", ClientprofileRoutes);
-import verifyRoutes from "./routes/admin/verify.route.js";
 app.use("/api/verify", verifyRoutes);
-import notificationRoutes from "./routes/Notification.route.js";
-import paymentRoutes from "./routes/Payment.route.js";
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/payments", paymentRoutes);
-import reviewRoutes from "./routes/Review.route.js";
 app.use("/api/reviews", reviewRoutes);
-import recommendationRoutes from './routes/clientSide/Artist.Recom.route.js';
-import distanceRoutes from "./routes/distance.route.js";
+
 app.use('/api/recommend', recommendationRoutes);
 app.use("/api/dis", distanceRoutes);
 app.use('/api/conversation', ConversationRoutes);
@@ -73,7 +79,16 @@ app.use('/api/chat', ChatAppRoutes);
 app.use('/api/users/', UserChatProfile);
 
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+if(process.env.NODE_ENV==="production")
+{
+    app.use(express.static(path.join(__dirname,"/frontend/dist")))
+    app.get(/.*/, (req,res) => {
+        res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+    })
+}
 
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+// import './App.css'
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
@@ -137,6 +138,7 @@ function App() {
 
            {/* //contract */}
            <Route path="/generate-contract/:bookingId" element={<GenerateContractPage />} />
+          {/* <Route path="/contracts/artist-sign/:bookingId" element={<ContractPreviewPage />} /> */}
 
 
           {/* //recommendations */}
@@ -145,6 +147,7 @@ function App() {
           {/* //apply.jsx */}
           <Route path="/apply/:id" element={<ApplyJob />} />
 
+          {/* <Route path="/dashboard" element={<ArtistDashboard />} /> */}
 
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
@@ -182,19 +185,19 @@ function App() {
 
 
           
-            <Route path="/payments/receipt/:id" element={<PaymentReceipt />} />
+     <Route path="/payments/receipt/:id" element={<PaymentReceipt />} />
 
-            <Route path="/search" element={<SearchResult />} />
+     <Route path="/search" element={<SearchResult />} />
 
 
-              <Route path="/chat" element={<ChatContainer />} />
+      <Route path="/chat" element={<ChatContainer />} />
 
-                    <Route path="/ArtistChat" element={
-                      <ProtectedRoute allowedRoles={["artist"]}>
-                        <ArtistChatPage />
-                      </ProtectedRoute>
-                      }
-                      />
+            <Route path="/ArtistChat" element={
+              <ProtectedRoute allowedRoles={["artist"]}>
+                <ArtistChatPage />
+              </ProtectedRoute>
+               }
+               />
 
 
         </Routes>     

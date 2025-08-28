@@ -1,5 +1,5 @@
 import express from "express";
-import {clientSignup, artistSignup, login, logout,forgotPassword,resetPassword,sendOtp,verifyOtp ,getProfile} from "../controllers/auth.controller.js";
+import {clientSignup, artistSignup, login, logout,forgotPassword,resetPassword,sendOtp,verifyOtp } from "../controllers/auth.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
 import parser from "../middleware/upload.js";
 
