@@ -32,7 +32,6 @@ const setCookies = (res, accessToken, refreshToken) => {
   });
 };
 
-// CLIENT SIGNUP → uses User model
 export const clientSignup = async (req, res) => {
   try {
     const { username, email, password, phone } = req.body;
@@ -70,119 +69,6 @@ export const clientSignup = async (req, res) => {
   }
 };
 
-// ARTIST SIGNUP → only in Artist model
-// export const artistSignup = async (req, res) => {
-//   try {
-//     const { username, email, password, phone, category, location } = req.body;
-
-//     if (!username || !email || !password || !phone || !category || !location) {
-//       return res.status(400).json({ message: "All fields are required" });
-//     }
-
-//     const exists = await Artist.findOne({ $or: [{ email }, { phone }] });
-//     if (exists) return res.status(400).json({ message: "Artist already exists" });
-
-
-//     const artist = new Artist({
-//       username,
-//       email,
-//       password,
-//       phone,
-//       role: "artist",
-//       category,
-//      location: {
-//     type: "Point",
-//     coordinates: req.body.location.coordinates,
-//     city: req.body.location.city,
-//   },
-//     });
-
-//     await artist.save();
-
-//     const { accessToken, refreshToken } = generateTokens(artist._id);
-//     await storeRefreshToken(artist._id, refreshToken);
-//     setCookies(res, accessToken, refreshToken);
-
-//     res.status(201).json({
-//       user: {
-//         _id: artist._id,
-//         username: artist.username,
-//         email: artist.email,
-//         phone: artist.phone,
-//         role: artist.role,
-//         category: artist.category,
-//         location: artist.location,
-//       },
-//       message: "Artist signed up successfully",
-//     });
-//   } catch (error) {
-//     console.error("Error in artistSignup:", error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// };
-
-//myver wiht otp
-// export const artistSignup = async (req, res) => {
-//   try {
-//     const { username, email, password, phone, category, location } = req.body;
-
-//     if (!username || !email || !password || !phone || !category || !location) {
-//       return res.status(400).json({ message: "All fields are required" });
-//     }
-
-//     // Validate location structure
-//     if (
-//       !location.coordinates ||
-//       !Array.isArray(location.coordinates) ||
-//       location.coordinates.length !== 2 ||
-//       typeof location.city !== "string"
-//     ) {
-//       return res.status(400).json({ message: "Invalid location format" });
-//     }
-
-//     const exists = await Artist.findOne({ $or: [{ email }, { phone }] });
-//     if (exists) return res.status(400).json({ message: "Artist already exists" });
-
-//     const artist = new Artist({
-//       username,
-//       email,
-//       password,
-//       phone,
-//       role: "artist",
-//       category,
-//       location: {
-//         type: "Point",
-//         coordinates: location.coordinates,
-//         city: location.city,
-//       },
-//     });
-
-//     await artist.save();
-
-//     const { accessToken, refreshToken } = generateTokens(artist._id);
-//     await storeRefreshToken(artist._id, refreshToken);
-//     setCookies(res, accessToken, refreshToken);
-
-//     res.status(201).json({
-//       user: {
-//         _id: artist._id,
-//         username: artist.username,
-//         email: artist.email,
-//         phone: artist.phone,
-//         role: artist.role,
-//         category: artist.category,
-//         location: artist.location,
-//       },
-//       message: "Artist signed up successfully",
-//     });
-//   } catch (error) {
-//     console.error("Error in artistSignup:", error);
-//     res.status(500).json({ message: "Internal server error", error: error.message });
-//   }
-// };
-
-
-//ver
 export const artistSignup = async (req, res) => {
    console.log("Files:", req.files);
     console.log("Body:", req.body);
@@ -201,12 +87,10 @@ export const artistSignup = async (req, res) => {
       lon
     } = req.body;
 
-    // Validate required fields
     if (!username || !email || !phone || !password || !city || !category || !citizenshipNumber || !dateOfBirth) {
       return res.status(400).json({ message: "All required fields must be provided" });
     }
 
-    // Check if artist already exists
     const existingArtist = await Artist.findOne({ $or: [{ email }, { phone }] });
     if (existingArtist) {
       return res.status(400).json({ message: "Artist with this email or phone already exists" });
@@ -268,7 +152,6 @@ export const artistSignup = async (req, res) => {
 
     await newArtist.save();
 
-    //new
     res.status(201).json({
   user: {
     _id: newArtist._id,
@@ -295,7 +178,7 @@ export const artistSignup = async (req, res) => {
       message: "Artist signed up successfully",
     });
   } catch (err) {
-   console.error("Artist signup error:", err); // Full error in terminal
+   console.error("Artist signup error:", err); 
     res.status(500).json({
       message: "Signup failed",
       error: err.message,
@@ -314,77 +197,6 @@ function getAgeFromDOB(dob) {
 }
 
 
-
-
-
-// export const login = async (req, res) => {
-//   try {
-
-//     const { email, password } = req.body;
-//     if (!email || !password) return res.status(400).json({ message: "Email and password required" });
-
-//     console.log("Login attempt for email:", email);
-
-//     let user = await User.findOne({ email }) || await Artist.findOne({ email });
-  
-
-//     if (!user) return res.status(401).json({ message: "Invalid credentials (email)" });
-
-//     const isMatch = await bcrypt.compare(password, user.password);
-    
-
-//     if (!isMatch) return res.status(401).json({ message: "Invalid credentials (password)" });
-
-//     const { accessToken, refreshToken } = generateTokens(user._id);
-//     await storeRefreshToken(user._id, refreshToken);
-//     setCookies(res, accessToken, refreshToken);
-
-//     const { password: _, ...userData } = user.toObject();
-
-//     res.status(200).json({ user: userData });
-//   } catch (error) {
-//     console.error("Login error:", error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// };
-
-//updated ver to check
-// export const login = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-//     if (!email || !password)
-//       return res.status(400).json({ message: "Email and password required" });
-
-//     console.log("Login attempt for email:", email);
-
-//     // Find user from both models
-//     let user = await User.findOne({ email }) || await Artist.findOne({ email });
-
-//     if (!user) {
-//       console.log("User not found with email:", email);
-//       return res.status(401).json({ message: "Invalid credentials (email)" });
-//     }
-
-//     console.log("User found:", user.email, "Hashed password:", user.password);
-
-//     const isMatch = await bcrypt.compare(password, user.password);
-//     console.log("Password match result:", isMatch);
-
-//     if (!isMatch) return res.status(401).json({ message: "Invalid credentials (password)" });
-
-//     const { accessToken, refreshToken } = generateTokens(user._id);
-//     await storeRefreshToken(user._id, refreshToken);
-//     setCookies(res, accessToken, refreshToken);
-
-//     const { password: _, ...userData } = user.toObject();
-
-//     res.status(200).json({ user: userData });
-//   } catch (error) {
-//     console.error("Login error:", error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// };
-
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -393,7 +205,6 @@ export const login = async (req, res) => {
 
     console.log("Login attempt for email:", email);
 
-    // 👇 CHECK WHERE USER IS FOUND FROM
     let user = await User.findOne({ email });
     let fromModel = "User";
 
@@ -404,10 +215,6 @@ export const login = async (req, res) => {
 
     if (!user)
       return res.status(401).json({ message: "Invalid credentials (email)" });
-
-   
-
-   
     const isMatch = await bcrypt.compare(password, user.password);
    
     if (!isMatch)
@@ -480,13 +287,9 @@ export const refreshToken = async (req, res) => {
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
-    
-
-    // Check both User and Artist models
-    const user = await User.findOne({ email }) || await Artist.findOne({ email });
+        const user = await User.findOne({ email }) || await Artist.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Sign token using your existing JWT_SECRET
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
     user.resetToken = token;
@@ -589,28 +392,5 @@ export const verifyOtp = async (req, res) => {
   }
 };
 
-//profile
 
-export const getProfile = async (req, res) => {
-  try {
-    // If you use JWT, get userId from token (e.g., req.user.userId)
-    // If you use sessions, get user from req.user
-    // Example for JWT middleware that sets req.user:
-    if (!req.user || !req.user.userId) {
-      return res.status(401).json({ message: "Not authenticated" });
-    }
-
-    // Try to find user in both models
-    let user = await User.findById(req.user.userId) || await Artist.findById(req.user.userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Remove sensitive fields
-    const { password, ...userData } = user.toObject();
-    res.status(200).json(userData);
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
 

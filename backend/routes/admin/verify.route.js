@@ -1,15 +1,9 @@
-// import { isAdmin } from "../../middleware/adminAuth.js";
-
-// import {}
-
-// router.get("/unverified-artists", isAdmin, 
 
 import express from "express";
 import Artist from "../../models/Artist.model.js";
 
 const router = express.Router();
 
-// Get all unverified artists
 router.get("/unverified-artists", async (req, res) => {
   try {
     const artists = await Artist.find({ isVerified: false });
@@ -19,7 +13,6 @@ router.get("/unverified-artists", async (req, res) => {
   }
 });
 
-// Verify an artist by ID
 router.patch("/verify-artist/:id", async (req, res) => {
   try {
     const { id } = req.params;

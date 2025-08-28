@@ -17,18 +17,16 @@ import JobPostRoutes from "./routes/Job.Post.route.js";
  import AdminRoutes from "./Admin_Backend/Admin.route.js"
  import ClientprofileRoutes from "./routes/Clientprofile.route.js"
  
- //chat
+ 
  import ConversationRoutes from "./ChatApp/route/Conversation.route.js";
 import ChatAppRoutes from "./ChatApp/route/Chat.route.js";
 import UserChatProfile from "./ChatApp/route/UserChatProfile.route.js"
-// import path from 'path';
 import { app, server } from "./ChatApp/lib/socket.js";
 
 dotenv.config();
 
 const PORT = process.env.PORT;
 
-// All middleware and routes
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
@@ -36,7 +34,6 @@ app.use(cors({
   credentials: true,
 }));
 
-// All your routes here
 app.get('/test', (req, res) => {
   res.json({ message: "Test route working" });
 });
@@ -77,12 +74,10 @@ app.use('/api/users/', UserChatProfile);
 
 
 
-// Start server only here
+
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   ConnectMongoDb();
 });
-// app.use('/api/conversation', ConversationRoutes);
-// app.use('/api/chat', ChatAppRoutes);
-// app.use('/api/users/', UserChatProfile);
+
 

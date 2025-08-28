@@ -4,7 +4,6 @@
   
   import Artist from "../models/Artist.model.js";
   export const protectRoute = async (req, res, next) => {
-  // console.log("protectroute hit");
   const accessToken = req.cookies.accessToken;
   if (!accessToken) {
     return res.status(401).json({ message: "Unauthorized - No token provided" });

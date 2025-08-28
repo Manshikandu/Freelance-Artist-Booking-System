@@ -4,8 +4,7 @@ import { getClientProfile, updateClientProfile } from '../controllers/ClientProf
 
 const router = express.Router();
 
-// Allow GET by id query param, no auth needed for chat avatar
-router.get('/', getClientProfile); // <-- add this line
+router.get('/', getClientProfile); 
 
 router.get('/get-profile', protectRoute, getClientProfile);
 

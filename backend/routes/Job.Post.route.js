@@ -7,8 +7,6 @@ import {
   deleteJobPost,getAllJobPosts,getAppliedJobPosts,applyToJobPost
 } from "../controllers/Job.Post.Controller.js";
 import { getMatchingJobPostsForArtist } from "../controllers/Recommendation.controller.js";
-import { authenticateArtist } from "../middleware/authenticateArtist.js";
-// import { verifytoken } from "../middleware/verifyToken.js";
 
 const router = express.Router();
 

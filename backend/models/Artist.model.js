@@ -129,10 +129,10 @@ const artistSchema = new mongoose.Schema({
   },
 
   guardianInfo: {
-    name: { type: String },            // Guardian's full name (e.g., "John Doe")
-    relation: { type: String },        // Relationship to the artist (e.g., "Father", "Mother", "Legal Guardian")
+    name: { type: String },     
+    relation: { type: String },        
     idDocument: {
-      url: { type: String }            // URL to the scanned ID or any valid document of the guardian (e.g., national ID, passport)
+      url: { type: String }            
     }
   },
 
@@ -153,7 +153,6 @@ const artistSchema = new mongoose.Schema({
 },
 { timestamps: true });
 
-// Virtual getter for ratePerHour
 artistSchema.virtual('ratePerHour').get(function () {
   return this.wage;
 });

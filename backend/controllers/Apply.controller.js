@@ -4,7 +4,6 @@ import Application from "../models/Application.model.js";
 export const getJobPostById = async (req, res) => {
   try {
     const { id } = req.params;
-    // Validate id is a valid ObjectId before querying
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid job post ID" });
     }

@@ -196,11 +196,9 @@ export const testRecommendationAlgorithms = async (req, res) => {
   try {
     const { clientId } = req.params;
     
-    // Test collaborative recommendations
     const collaborativeRecs = await getCollaborativeRecommendations(5);
     console.log('Collaborative recommendations:', collaborativeRecs.length);
     
-    // Test content-based if user has bookings
     const clientBookings = await Booking.find({ client: clientId }).select('artist').lean();
     let contentRecs = [];
     if (clientBookings.length > 0) {

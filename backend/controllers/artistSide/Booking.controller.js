@@ -29,11 +29,9 @@ export const getArtistBookings = async (req, res) => {
         sortField = "updatedAt";
         break;
       case "priority":
-        // priority sorting needs special handling below
         sortField = null;
         break;
       default:
-        // fallback to updatedAt desc
         sortField = "updatedAt";
         break;
     }
@@ -79,7 +77,7 @@ export const updateBookingStatus = async (req, res) => {
   try {
     const artistId = req.user._id;
     const { bookingId } = req.params;
-    const { status } = req.body; // Extract status outside the transaction
+    const { status } = req.body; 
 
     console.log("Artist ID:", artistId);
     console.log("Booking ID:", bookingId);
@@ -98,14 +96,13 @@ export const updateBookingStatus = async (req, res) => {
         throw new Error("Unauthorized");
       }
       
-      // For acceptance, check for conflicts one more time atomically
       if (status === "accepted") {
-        const BUFFER_MS = 15 * 60 * 1000; // 30 minutes buffer
+        const BUFFER_MS = 15 * 60 * 1000; 
         const newStart = new Date(booking.startTime).getTime();
         const newEnd = new Date(booking.endTime).getTime();
 
         const conflictingBooking = await Booking.findOne({
-          _id: { $ne: booking._id }, // Exclude current booking
+          _id: { $ne: booking._id }, 
           artist: booking.artist,
           status: { $in: ['accepted', 'booked'] },
           $or: [
@@ -138,7 +135,6 @@ export const updateBookingStatus = async (req, res) => {
 
     await session.endSession();
 
-    //  Create notification for client
     const artistName = req.user?.username || "An artist";
     let message = "";
     if (status === "accepted") {
@@ -186,8 +182,6 @@ export const updateBookingStatus = async (req, res) => {
 
 
 
-
-
 export const requestCancellationByArtist = async (req, res) => {
   try {
     const bookingId = req.params.id;
@@ -207,12 +201,11 @@ export const requestCancellationByArtist = async (req, res) => {
       return res.status(400).json({ message: `Cannot request cancellation for a booking with status ${booking.status}.` });
     }
 
-    booking.status = "cancellation_requested_by_artist"; // Artist requested cancellation
+    booking.status = "cancellation_requested_by_artist"; 
     booking.cancelledBy = "artist";
 
     await booking.save();
 
-    // Notify client about cancellation request
     await createNotificationAndEmit({
       userId: booking.client._id,
       userType: "Client",
@@ -231,8 +224,7 @@ export const requestCancellationByArtist = async (req, res) => {
 export const approveClientCancellationByArtist = async (req, res) => {
   try {
     const bookingId = req.params.id;
-    const userId = req.user.id; // artist ID
-
+    const userId = req.user.id; 
     const booking = await Booking.findById(bookingId)
       .populate("client")
       .populate("artist");
@@ -249,16 +241,14 @@ export const approveClientCancellationByArtist = async (req, res) => {
 
     booking.status = "cancelled";
 
-    // Update payment statuses
     const payments = await Payment.find({ bookingId: booking._id, paymentStatus: "paid" });
     for (const payment of payments) {
-      payment.paymentStatus = "refunded"; // or "unpaid" if refund is offline
+      payment.paymentStatus = "refunded"; 
       await payment.save();
     }
 
     await booking.save();
 
-    // Notify both parties
     await createNotificationAndEmit({
       userId: booking.client._id,
       userType: "Client",
@@ -289,14 +279,13 @@ export const getUpcomingBookings = async (req, res) => {
     const artistId = req.user._id;
 
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // start of today
+    today.setHours(0, 0, 0, 0);
 
-    // Fetch bookings where eventDate >= today and artist matches
     const bookings = await Booking.find({
       artist: artistId,
       eventDate: { $gte: today },
       status: { $in: ["booked"] },
-    }).sort({ eventDate: 1 }); // sort ascending by eventDate
+    }).sort({ eventDate: 1 });
 
     res.status(200).json({ bookings });
   } catch (error) {

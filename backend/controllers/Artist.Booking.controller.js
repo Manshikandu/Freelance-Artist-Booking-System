@@ -37,34 +37,27 @@ export const createBooking = async (req, res) => {
       return res.status(404).json({ message: "Artist not found" });
     }
 
-    // ENHANCED: Use atomic transaction for race condition prevention
     const session = await mongoose.startSession();
     
     try {
       const newBooking = await session.withTransaction(async () => {
-        // Mathematical conflict detection with atomic transaction protection
-        const BUFFER_MS = 30 * 60 * 1000; // 30 minutes buffer
+        const BUFFER_MS = 30 * 60 * 1000; 
         const newStart = new Date(startTime).getTime();
         const newEnd = new Date(endTime).getTime();
 
-        // ATOMIC CONFLICT CHECK: This locks the documents during transaction
         const conflictingBooking = await Booking.findOne({
           artist: artistId,
           status: { $in: ['accepted', 'booked'] },
-          // Mathematical time overlap detection
           $or: [
             {
-              // Case 1: New booking starts during existing booking (with buffer)
               startTime: { $lte: new Date(newEnd) },
               endTime: { $gt: new Date(newStart - BUFFER_MS) }
             },
             {
-              // Case 2: New booking ends during existing booking (with buffer)
               startTime: { $lt: new Date(newEnd + BUFFER_MS) },
               endTime: { $gte: new Date(newStart) }
             },
             {
-              // Case 3: Existing booking is completely within new booking (with buffer)
               startTime: { $gte: new Date(newStart - BUFFER_MS) },
               endTime: { $lte: new Date(newEnd + BUFFER_MS) }
             }
@@ -75,7 +68,6 @@ export const createBooking = async (req, res) => {
           throw new Error("Booking conflict: The selected time slot conflicts with an existing booking.");
         }
 
-        // ATOMIC BOOKING CREATION: Only happens if no conflicts found
         const booking = new Booking({
           client: clientId,
           artist: artistId,
@@ -144,7 +136,6 @@ export const getMyBookings = async (req, res) => {
       return res.status(403).json({ error: "Invalid role" });
     }
 
-    // Execute query without sort for now
     const bookings = await query;
     const bookingIds = bookings.map((b) => b._id);
     const payments = await Payment.find({
@@ -175,7 +166,6 @@ export const getMyBookings = async (req, res) => {
         sortOrder === "asc" ? a.score - b.score : b.score - a.score
       );
     } else {
-      // Default fallback: updatedAt desc
       sortedBookings = bookings.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
     }
 
@@ -207,7 +197,7 @@ export const getBookedSlotsForArtist = async (req, res) => {
     const bookings = await Booking.find({
       artist: artistId,
       status: { $in: ["accepted", "booked"] },
-    }).select("eventDate startTime endTime status");  // Added status
+    }).select("eventDate startTime endTime status"); 
 
     res.status(200).json({ bookedSlots: bookings });
   } catch (error) {
@@ -226,10 +216,6 @@ export const getBookingById = async (req, res) => {
     if (!booking) {
       return res.status(404).json({ message: "Booking not found" });
     }
-
-    // console.log("Logged in user ID:", req.user?._id);
-    // console.log("Booking client ID:", booking.client._id.toString());
-    // console.log("Booking artist ID:", booking.artist._id.toString());
     
     const userIdStr = req.user._id.toString();
 
@@ -267,12 +253,11 @@ export const requestCancellationByClient = async (req, res) => {
       return res.status(400).json({ message: `Cannot request cancellation for a booking with status ${booking.status}.` });
     }
 
-    booking.status = "cancellation_requested_by_client"; // New status indicating client requested cancellation
+    booking.status = "cancellation_requested_by_client"; 
     booking.cancelledBy = "client";
 
     await booking.save();
 
-    // Notify artist about cancellation request
     await createNotificationAndEmit({
       userId: booking.artist._id,
       userType: "Artist",
@@ -292,8 +277,7 @@ export const requestCancellationByClient = async (req, res) => {
 export const approveArtistCancellationByClient = async (req, res) => {
   try {
     const bookingId = req.params.id;
-    const userId = req.user.id; // client ID
-
+    const userId = req.user.id; 
     const booking = await Booking.findById(bookingId)
       .populate("client")
       .populate("artist");
@@ -310,16 +294,14 @@ export const approveArtistCancellationByClient = async (req, res) => {
 
     booking.status = "cancelled";
 
-    // Update payment statuses
     const payments = await Payment.find({ bookingId: booking._id, paymentStatus: "paid" });
     for (const payment of payments) {
-      payment.paymentStatus = "refunded"; // or "unpaid" if refund is offline
+      payment.paymentStatus = "refunded"; 
       await payment.save();
     }
 
     await booking.save();
 
-    // Notify both parties
     await createNotificationAndEmit({
       userId: booking.client._id,
       userType: "Client",

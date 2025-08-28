@@ -1,16 +1,3 @@
-// import express from "express";
-// import {
-//   getArtistsByCategory,
-//   searchArtists,
-// } from "../controllers/Artist.List.controller.js";
-// const router = express.Router();
-
-// router.get("/client/artists", getArtistsByCategory);
-
-// router.get("/client/artists/search", searchArtists);
-
-// export default router;
-
 
 
 import express from "express";

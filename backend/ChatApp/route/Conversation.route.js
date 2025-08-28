@@ -3,7 +3,7 @@ import { createOrGetConversation, getUserConversations } from "../controller/con
 
 const router = express.Router();
 
-router.post("/", createOrGetConversation); // create or return conversation
-router.get("/:userId", getUserConversations); // get all user's conversations
+router.post("/", createOrGetConversation);
+router.get("/:userId", getUserConversations); 
 
 export default router;

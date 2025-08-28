@@ -1,7 +1,7 @@
 
 
 import moment from 'moment';
-import cloudinary from '../utils/CloudinaryConfig.js'; // Import the cloudinary config
+import cloudinary from '../utils/CloudinaryConfig.js'; 
 import pkg from 'pdfkit';
 const PDFDocument = pkg;      
 
@@ -10,19 +10,7 @@ export function generateContractAndUpload(booking, clientSig, artistSig, publicI
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({ margin: 50 });
 
-    // const uploadStream = cloudinary.uploader.upload_stream(
-    //   {
-    //     resource_type: 'auto',
-    //     folder: 'contracts',
-    //     public_id: publicId ,
-    //     overwrite: true,
-    //   },
-    //   (error, result) => {
-    //     if (error) return reject(error);
-    //     resolve(result.secure_url);
-    //       console.log(result.secure_url);
-    //   }
-    // );
+    
    const uploadStream =   cloudinary.uploader.upload_stream(
   {
     resource_type: "raw",
@@ -31,7 +19,7 @@ export function generateContractAndUpload(booking, clientSig, artistSig, publicI
     overwrite: true,
     use_filename: true,
     unique_filename: false,
-    flags: "attachment:false", // ✅ important for inline iframe viewing
+    flags: "attachment:false", 
     context: "alt=PDF Contract Document",
     access_mode: "public",
   },
@@ -52,9 +40,7 @@ export function generateContractAndUpload(booking, clientSig, artistSig, publicI
   });
 }
 
-// You can paste the full buildContractPDFContent function here (as provided above)
 function buildContractPDFContent(doc, booking, clientSig, artistSig) {
-  /* ==== PRE‑CALCULATED VALUES ==== */
   const eventDate   = moment(booking.eventDate).format('MMMM D, YYYY');
   const startTime   = moment(booking.startTime).format('hh:mm A');
   const endTime     = moment(booking.endTime).format('hh:mm A');
@@ -62,13 +48,11 @@ function buildContractPDFContent(doc, booking, clientSig, artistSig) {
   const wage        = booking.wage || 0;
   const advance     = Math.floor(wage / 2);
 
-  /* ==== HEADER ==== */
   doc.fontSize(20).text('Artist Booking Contract', { align: 'center' }).moveDown();
   doc.fontSize(12)
      .text(`This Agreement is made on this ${moment().format('MMMM D, YYYY')}.`)
      .moveDown();
 
-  /* ==== CONTACT PERSON ==== */
   doc.fontSize(14).text('Event Contact Person:', { underline: true });
   doc.fontSize(12)
      .text(`Name:  ${booking.contactName  || booking.client.username || 'N/A'}`)
@@ -76,7 +60,6 @@ function buildContractPDFContent(doc, booking, clientSig, artistSig) {
      .text(`Email: ${booking.contactEmail || booking.client.email   || 'N/A'}`)
      .moveDown();
 
-  /* ==== ARTIST INFO ==== */
   doc.fontSize(14).text('Artist/Performer:', { underline: true });
   doc.fontSize(12)
      .text(`Name:  ${booking.artist.username || booking.artist.name || ''}`)
@@ -84,7 +67,6 @@ function buildContractPDFContent(doc, booking, clientSig, artistSig) {
      .text(`Email: ${booking.artist.email || ''}`)
      .moveDown();
 
-  /* ==== EVENT DETAILS ==== */
   doc.fontSize(14).text('1. Event Details', { underline: true });
   doc.fontSize(12)
      .text('The Artist agrees to perform the services at the event.')
@@ -93,13 +75,11 @@ function buildContractPDFContent(doc, booking, clientSig, artistSig) {
      .text(`- Performance Time: From ${startTime} to ${endTime}`)
      .moveDown();
 
-  /* ==== PAYMENT ==== */
   doc.fontSize(14).text('3. Payment', { underline: true });
   doc.fontSize(12)
      .text(`- Total Fee: Rs. ${wage} for approximately ${totalHours.toFixed(2)} hour(s)`)
      .moveDown();
 
-  /* ==== PAYMENT TERMS ==== */
   doc.fontSize(14).text('4. Payment Terms', { underline: true });
   doc.fontSize(12).text('Payment will be made by (check one or more):');
   const pm = booking.paymentMethods || {};
@@ -117,14 +97,12 @@ function buildContractPDFContent(doc, booking, clientSig, artistSig) {
           + `Artist's signature to confirm the booking.`)
      .moveDown();
 
-  /* ==== ADVANCE & BALANCE ==== */
   doc.fontSize(14).text('5. Advance & Remaining Balance', { underline: true });
   doc.fontSize(12)
      .text(`Advance to be paid: Rs. ${advance}`)
      .text(`Remaining to be paid after performance: Rs. ${wage - advance}`)
      .moveDown();
 
-  /* ==== CANCELLATION POLICY ==== */
   doc.fontSize(14).text('6. Cancellation Policy', { underline: true });
   doc.fontSize(12)
      .text('- If Client cancels more than 7 days before the event, the advance payment is forfeited;')
@@ -132,11 +110,9 @@ function buildContractPDFContent(doc, booking, clientSig, artistSig) {
      .text('- If Artist cancels, the full advance will be refunded within 5 business days.')
      .moveDown();
 
-  /* ==== ADDITIONAL REQUIREMENTS ==== */
   doc.fontSize(14).text('7. Additional Requirements', { underline: true });
   doc.fontSize(12).text(booking.technicalReqs || 'None specified').moveDown();
 
-  /* ==== LIABILITY ==== */
   doc.fontSize(14).text('8. Liability', { underline: true });
   doc.fontSize(12)
      .text('Client agrees to provide a safe environment for the Artist. '
@@ -144,22 +120,18 @@ function buildContractPDFContent(doc, booking, clientSig, artistSig) {
         +  'except where caused by the Artist’s negligence.')
      .moveDown();
 
-  /* ==== MISCELLANEOUS ==== */
   doc.fontSize(14).text('9. Miscellaneous', { underline: true });
   doc.fontSize(12)
      .text('This Agreement is the entire understanding between the parties.')
      .text('Any amendments must be in writing and signed by both parties.')
      .moveDown();
 
-  /* ==== SIGNATURES ==== */
   doc.fontSize(12).text('Client Signature:', 50, doc.y);
   doc.fontSize(12).text('Artist Signature:', 320, doc.y);
   doc.moveDown(1);
 
-  // Store the current Y position for both signatures
   const signatureY = doc.y;
 
-  /* -- Client signature image -- */
   if (clientSig) {
     try {
       const clientBuf = Buffer.from(
@@ -185,7 +157,6 @@ function buildContractPDFContent(doc, booking, clientSig, artistSig) {
     doc.fontSize(12).text('_____________________________', 50, signatureY);
   }
 
-  /* -- Artist signature image -- */
   if (artistSig) {
     try {
       const artistBuf = Buffer.from(
@@ -211,7 +182,6 @@ function buildContractPDFContent(doc, booking, clientSig, artistSig) {
     doc.fontSize(12).text('_____________________________', 320, signatureY);
   }
 
-  // Move the cursor down after both signatures
   doc.y = signatureY + 90;
   doc.moveDown(1);
 }

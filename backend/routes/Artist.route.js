@@ -5,8 +5,7 @@ import {UpdateArtist,
 
         upload,
         getAllArtists
-        //availability
-       // Updateavailability
+       
      } from '../controllers/Artist.controller.js';
 const router = express.Router();
 
@@ -14,20 +13,18 @@ const router = express.Router();
 router.patch("/profile/:id", UpdateArtist);
 
 
-router.get('/profile/:id', ArtistProfile);   //get Artist profile by ID.
-
-// router.get('/:id', ArtistProfile);
+router.get('/profile/:id', ArtistProfile);  
 
 
-router.post('/upload-media', upload);   //Artist to upload media
+router.post('/upload-media', upload);   
 
-router.get("/artists", getAllArtists); // add this in your routes
+router.get("/artists", getAllArtists);
 
 
 
 
 
-//Artist.route.js
+
 
 router.get("/search", async (req, res) => {
   try {

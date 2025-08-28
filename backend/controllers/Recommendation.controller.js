@@ -1,5 +1,4 @@
 
-// controllers/Recommendation.controller.js
 import JobPost from "../models/JobPost.model.js";
 import Artist from "../models/Artist.model.js";
 import { haversine } from "../utils/haversine.js";
@@ -12,7 +11,6 @@ export const getMatchingJobPostsForArtist = async (req, res) => {
 
     const now = new Date();
 
-    // Fetch only relevant job posts
     const posts = await JobPost.find({
       deadline: { $gt: now },
       date: { $exists: true }

@@ -1,19 +1,15 @@
 
-// controllers/Contract.controller.js
 import moment from 'moment';
 import Booking from '../models/Artist.Booking.model.js';
 import { createNotificationAndEmit } from './Notification.controller.js';
-import { generateContractAndUpload } from '../utils/Contractpdf.js'   // 👈  NEW helper
+import { generateContractAndUpload } from '../utils/Contractpdf.js'  
 
-import { generateSignedUrl } from '../utils/CloudinaryConfig.js'; // 👈 NEW for signed UR
+import { generateSignedUrl } from '../utils/CloudinaryConfig.js'; 
 
-// Generate signed URL for contract PDF
 export const getSignedUrl = (req, res) => {
-  // Get the publicId from route parameter
   const publicId = req.params.publicId;
   console.log('Backend received publicId:', publicId);
   
-  // Ensure it has the contracts/ prefix
   const fullPublicId = publicId.startsWith('contracts/') 
     ? publicId 
     : `contracts/${publicId}`;
@@ -30,11 +26,6 @@ export const getSignedUrl = (req, res) => {
   }
 };
 
-
-
-// ─────────────────────────────────────────────────────────────────────────────
-// CREATE DRAFT (client)
-// ─────────────────────────────────────────────────────────────────────────────
 export const generateClientContract = async (req, res) => {
   const { bookingId, signatureImage, paymentMethods, technicalReqs } = req.body;
   const userId = req.user?._id;
@@ -52,7 +43,7 @@ export const generateClientContract = async (req, res) => {
     if (['draft', 'signed'].includes(booking.contractStatus))
       return res.status(400).json({ message: 'Contract already generated.' });
 
-    /* ── 1. Update booking finance + meta ──────────────────────────────── */
+   
     const hourlyRate = booking.artist.wage || 0;
     const totalHours = moment(booking.endTime).diff(moment(booking.startTime), 'hours', true);
     const totalWage  = Math.round(totalHours * hourlyRate);
@@ -70,7 +61,6 @@ export const generateClientContract = async (req, res) => {
     });
     await booking.save();
 
-    /* ── 2. Generate PDF → Cloudinary ─────────────────────────────────── */
     const secureUrl = await generateContractAndUpload(
       booking,
       signatureImage,
@@ -80,8 +70,6 @@ export const generateClientContract = async (req, res) => {
 
     booking.contractUrl = secureUrl;
     await booking.save();
-
-    /* ── 3. Notify artist ─────────────────────────────────────────────── */
     await createNotificationAndEmit({
       userId: booking.artist._id,
       userType: 'Artist',
@@ -96,9 +84,6 @@ export const generateClientContract = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SIGN BY ARTIST
-// ─────────────────────────────────────────────────────────────────────────────
 export const signContractByArtist = async (req, res) => {
   const { bookingId, artistSignature } = req.body;
   const userId = req.user?._id;
@@ -111,20 +96,17 @@ export const signContractByArtist = async (req, res) => {
     if (!booking) return res.status(404).json({ message: 'Booking not found' });
     if (booking.artist._id.toString() !== userId.toString())
       return res.status(403).json({ message: 'Only the artist can sign the contract' });
-
-    /* ── 1. Update booking status ─────────────────────────────────────── */
+   
         Object.assign(booking, {
       status: 'accepted',
       contractSignedAt: new Date(),
       artistSignature,
-      artistSignatureDate: new Date(),   // ← add this line
+      artistSignatureDate: new Date(),   
       contractStatus: 'signed',
       lastActionTime: new Date(),
     });
 
     await booking.save();
-
-    /* ── 2. Regenerate PDF with both signatures → Cloudinary ──────────── */
     const secureUrl = await generateContractAndUpload(
       booking,
       booking.clientSignature,
@@ -134,8 +116,6 @@ export const signContractByArtist = async (req, res) => {
 
     booking.contractUrl = secureUrl;
     await booking.save();
-
-    /* ── 3. Notify client ─────────────────────────────────────────────── */
     await createNotificationAndEmit({
       userId: booking.client._id,
       userType: 'Client',
@@ -150,9 +130,6 @@ export const signContractByArtist = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// GET DETAILS (unchanged)
-// ─────────────────────────────────────────────────────────────────────────────
 export const getContractDetails = async (req, res) => {
   const { bookingId } = req.params;
   try {

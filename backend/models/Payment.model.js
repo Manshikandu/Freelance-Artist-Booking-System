@@ -14,7 +14,7 @@ const paymentSchema = new mongoose.Schema({
   },
   artistId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Artist", // assuming this is separate from User
+    ref: "Artist", 
     required: true,
   },
   amount: {

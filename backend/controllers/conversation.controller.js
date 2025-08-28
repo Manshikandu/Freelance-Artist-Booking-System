@@ -33,7 +33,7 @@ export const createOrGetConversation = async (req, res) => {
         const model = m.role === "client" ? Client : Artist;
         const user = await model.findById(m.userId);
 
-        // Fetch client profile if role is client
+        
         let profilePic = "";
         if (m.role === "client") {
           const clientProfile = await ClientProfile.findOne({ userId: m.userId });
@@ -56,15 +56,13 @@ export const createOrGetConversation = async (req, res) => {
       members: populatedMembers,
       createdAt: conversation.createdAt,
     });
-
-    // res.status(200).json(conversation);
   } catch (error) {
     console.log("Error in createOrGetConversation controller:", error.message);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-// Get all conversations for a user
+
 export const getUserConversations = async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -106,9 +104,6 @@ export const getUserConversations = async (req, res) => {
     );
 
     res.status(200).json(populatedConversations);
-
-
-    // res.status(200).json(conversations);
   } catch (error) {
     console.log("Error in getUserConversations:", error.message);
     res.status(500).json({ error: "Internal server error" });

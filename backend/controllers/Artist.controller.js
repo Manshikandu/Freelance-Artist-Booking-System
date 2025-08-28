@@ -1,5 +1,5 @@
 
-import Artist from "../models/Artist.model.js"; // Adjust import as needed
+import Artist from "../models/Artist.model.js";
 
 export const UpdateArtist = async (req, res) => {
   const artistId = req.params.id;
@@ -83,9 +83,6 @@ export const UpdateArtist = async (req, res) => {
 };
 
 
-
-
-// Get Artist profile by ID
 export const ArtistProfile = async (req, res) => {
   try {
     const artist = await Artist.findById(req.params.id);
@@ -121,7 +118,6 @@ export const upload = async(req,res) =>
     }
 };
 
-//simple fetch
 export const getAllArtists = async (req, res) => {
   try {
     const { category } = req.query;

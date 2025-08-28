@@ -7,7 +7,6 @@ import parser from "../middleware/upload.js";
 const router = express.Router();
 
 router.post("/clientSignup", clientSignup);
-// router.post("/artistSignup", artistSignup);
 router.post(
   "/artistSignup",
   parser.fields([
@@ -20,14 +19,12 @@ router.post(
 
 router.post("/login", login);
 router.post("/logout", logout);
-// router.get("/profile", protectRoute, getProfile);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);
 router.post("/send-otp", sendOtp);
 router.post("/verify-otp", verifyOtp);
 
 
-// router.get("/profile",getProfile);
 
 
 export default router;  

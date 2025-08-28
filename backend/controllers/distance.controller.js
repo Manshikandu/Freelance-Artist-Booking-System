@@ -37,7 +37,7 @@ export const getRoute = async (req, res) => {
     const orsRes = await fetch("https://api.openrouteservice.org/v2/directions/foot-walking/geojson", {
       method: "POST",
       headers: {
-        Authorization: process.env.ORS_API_KEY, // NOT VITE_ORS_API_KEY
+        Authorization: process.env.ORS_API_KEY, 
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -52,7 +52,7 @@ export const getRoute = async (req, res) => {
       return res.status(orsRes.status).json({ message: "ORS error" });
     }
     if (!process.env.ORS_API_KEY) {
-  console.error("❌ ORS_API_KEY is not defined in .env");
+  console.error("CORS_API_KEY is not defined in .env");
 }
 
 

@@ -19,10 +19,6 @@ try {
         return res.status(401).json({message: "Invalid username or password"});
     }
 
-    // const isMatch = await bcrypt.compare(password, admin.password);
-    // if (!isMatch) {
-    //   return res.status(401).json({ message: 'Invalid username or password' });
-    // }
 
     const accessToken = jwt.sign(
       { username, role: 'admin' },

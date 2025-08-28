@@ -96,23 +96,18 @@ export const getReviewsForArtist = async (req, res) => {
     const { artistId } = req.params;
     const artist = await Artist.findById(artistId).select('username weightedRating rawAverageRating totalRatings');
     const artistName = artist?.username || 'Unknown Artist';
-
-    // Populate clientId (User) and then fetch ClientProfile for each review
     const reviews = await Review.find({ artistId, status: "confirmed" })
       .populate("clientId", "username email");
 
-    // Fetch all client profiles in one go
+    // Fetch all client profiles 
     const clientIds = reviews.map(r => r.clientId?._id).filter(Boolean);
     const profiles = await ClientProfile.find({ userId: { $in: clientIds } });
     const profileMap = {};
     profiles.forEach(profile => {
       profileMap[profile.userId.toString()] = profile;
     });
-
-    // Attach clientProfile to each review
     const reviewsWithProfile = reviews.map(r => {
       let clientProfile = profileMap[r.clientId?._id?.toString()];
-      // Always return a profilePicture.url field for frontend compatibility
       let profileObj = clientProfile ? clientProfile.toObject() : null;
       if (profileObj) {
         if (!profileObj.profilePicture) profileObj.profilePicture = {};

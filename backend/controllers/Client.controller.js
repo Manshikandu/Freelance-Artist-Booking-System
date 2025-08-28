@@ -1,9 +1,6 @@
 import Booking from "../models/Artist.Booking.model.js";
 import Artist from "../models/Artist.model.js"; 
 import User from "../models/user.model.js"; 
-
-// @desc    Create a new booking request for an artist
-// @route   POST /api/booking/request
 export const bookingArtist = async (req, res) => {
   try {
     const {
@@ -14,7 +11,7 @@ export const bookingArtist = async (req, res) => {
       artistId
     } = req.body;
 
-    const clientId = req.user ? req.user._id : null; // if using protectRoute
+    const clientId = req.user ? req.user._id : null; 
 
     if (!name || !email || !date || !location || !artistId) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -63,12 +60,10 @@ export const getBookingRequest = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
 export const BookingStatus = async (req, res) => {
   try {
     const { bookingId } = req.params;
-    const { status } = req.body; // expected: "pending", "accepted", "rejected", "completed"
+    const { status } = req.body; 
 
     if (!["pending", "accepted", "rejected", "completed"].includes(status)) {
       return res.status(400).json({ message: "Invalid status value" });

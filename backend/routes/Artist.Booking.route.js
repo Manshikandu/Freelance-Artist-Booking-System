@@ -14,9 +14,7 @@ router.get("/artist/:artistId/booked-slots", getBookedSlotsForArtist);
 
 router.get("/:id", verifytoken, getBookingById);
 
-// router.patch("/:id/cancel", verifytoken, cancelBookingByClient);
 router.patch("/:id/request-cancel", verifytoken, requestCancellationByClient);
 router.patch("/:id/approve-cancel", verifytoken, approveArtistCancellationByClient);
 
-// Artist requests cancellation
 export default router;

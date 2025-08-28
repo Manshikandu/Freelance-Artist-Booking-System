@@ -1,6 +1,6 @@
 // routes/geocode.js
 import express from "express";
-import fetch from "node-fetch"; // or use global fetch if using Node 18+
+import fetch from "node-fetch"; 
 
 const router = express.Router();
 

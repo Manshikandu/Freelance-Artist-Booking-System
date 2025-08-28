@@ -1,26 +1,22 @@
 import Artist from "../models/Artist.model.js"; 
 import Booking from "../models/Artist.Booking.model.js";
 
-/// Fetch artists by category for client browsing
 export const getArtistsByCategory = async (req, res) => {
   try {
-    const { category, location, minPrice, maxPrice } = req.query; // get query parameters
+    const { category, location, minPrice, maxPrice } = req.query; 
     let filter = { role: "artist", category: new RegExp(`^${category}$`, "i") };
 
-    // Apply location filter if provided
     if (location) {
-      filter.location = new RegExp(`^${location}$`, "i"); // Case-insensitive match for location
+      filter.location = new RegExp(`^${location}$`, "i"); 
     }
 
-    // Apply price filters if provided
     if (minPrice || maxPrice) {
       filter.wage = {};
-      if (minPrice) filter.wage.$gte = minPrice; // Greater than or equal to minPrice
-      if (maxPrice) filter.wage.$lte = maxPrice; // Less than or equal to maxPrice
+      if (minPrice) filter.wage.$gte = minPrice; 
+      if (maxPrice) filter.wage.$lte = maxPrice; 
     }
 
-    const artists = await Artist.find(filter); // Apply all filters
-
+    const artists = await Artist.find(filter); 
     res.status(200).json({
       success: true,
       count: artists.length,
@@ -32,7 +28,6 @@ export const getArtistsByCategory = async (req, res) => {
   }
 };
 
-// Search artists by username, category, location (with price and location filters)
 export const searchArtists = async (req, res) => {
   try {
     const query = req.query.query?.toLowerCase().trim();
@@ -42,46 +37,38 @@ export const searchArtists = async (req, res) => {
       return res.status(400).json({ message: "Search query is required" });
     }
 
-    // Build the filter object
     let filter = { role: "artist" };
     
     if (location) {
-      filter.location = new RegExp(`^${location}$`, "i"); // Location filter
+      filter.location = new RegExp(`^${location}$`, "i"); 
     }
 
-    // Apply price filters if provided
     if (minPrice || maxPrice) {
       filter.wage = {};
-      if (minPrice) filter.wage.$gte = minPrice; // Greater than or equal to minPrice
-      if (maxPrice) filter.wage.$lte = maxPrice; // Less than or equal to maxPrice
+      if (minPrice) filter.wage.$gte = minPrice; 
+      if (maxPrice) filter.wage.$lte = maxPrice; 
     }
 
-    const allArtists = await Artist.find(filter); // Find artists by filters
-
+    const allArtists = await Artist.find(filter); 
     const scoredArtists = allArtists.map((artist) => {
       const username = artist.username?.toLowerCase() || "";
       const category = artist.category?.toLowerCase() || "";
       const location = artist.location?.toLowerCase() || "";
 
-      // Find index of query in each field (-1 if not found)
       const usernameIndex = username.indexOf(query);
       const categoryIndex = category.indexOf(query);
       const locationIndex = location.indexOf(query);
 
-      // Find minimum index that is not -1
       const indexes = [usernameIndex, categoryIndex, locationIndex].filter(i => i !== -1);
       const score = indexes.length ? Math.min(...indexes) : Infinity;
 
       return { artist, score };
     });
 
-    // Filter out artists where score is Infinity (query not found)
     const filtered = scoredArtists.filter(entry => entry.score !== Infinity);
 
-    // Sort by score (lowest index first)
     filtered.sort((a, b) => a.score - b.score);
 
-    // Return only artists
     const results = filtered.map(entry => entry.artist);
 
     res.status(200).json({ success: true, count: results.length, artists: results });
@@ -91,7 +78,6 @@ export const searchArtists = async (req, res) => {
   }
 };
 
-//get Artist profile by ID.
 export const GetArtistProfile = async(req, res) => {
     try{
         const artist = await Artist.findById(req.params.id);
@@ -106,9 +92,6 @@ export const GetArtistProfile = async(req, res) => {
         res.status(500).json({error: 'Fetch error'});
     }
 };
-
-
-
 
 
 export const getClientBookings = async (req, res) => {

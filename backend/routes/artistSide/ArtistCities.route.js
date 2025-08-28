@@ -3,7 +3,7 @@ import Artist from "../../models/Artist.model.js";
 
 const router = express.Router();
 
-// Get unique cities where artists are located
+
 router.get("/artists/cities", async (req, res) => {
   try {
     const { search } = req.query;
@@ -46,12 +46,11 @@ router.get("/artists/cities", async (req, res) => {
       ? cities[0].allLocations.filter(loc => loc && loc.trim())
       : [];
 
-    // Remove duplicates and filter by search term if provided
     const uniqueLocations = [...new Set(locations)];
     const filteredLocations = search 
       ? uniqueLocations.filter(loc => 
           loc.toLowerCase().includes(search.toLowerCase())
-        ).slice(0, 5) // Limit to 5 suggestions
+        ).slice(0, 5) 
       : uniqueLocations.slice(0, 10);
 
     res.json(filteredLocations);

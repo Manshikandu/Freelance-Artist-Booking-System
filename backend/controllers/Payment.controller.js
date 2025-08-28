@@ -58,14 +58,13 @@ export const createPaypalOrder = async (req, res) => {
 
       const approvalURL = paymentInfo.links.find(link => link.rel === "approval_url").href;
 
-      // Save bookingId, paymentId, paymentType in cookie for capture step
       res.cookie("paypalBookingInfo", JSON.stringify({
         bookingId: booking._id.toString(),
         paymentId: paymentInfo.id,
         paymentType,
       }), {
         httpOnly: true,
-        maxAge: 10 * 60 * 1000, // 10 minutes
+        maxAge: 10 * 60 * 1000, 
         sameSite: "Lax",
       });
 
@@ -86,7 +85,6 @@ export const capturePaypalPayment = async (req, res) => {
 
     const { bookingId, paymentId, paymentType: cookiePaymentType } = JSON.parse(cookieData);
 
-    // Prefer query param paymentType if present, else from cookie
     const paymentType = queryPaymentType || cookiePaymentType;
 
     const booking = await Booking.findById(bookingId).populate("client", "username").populate("artist", "username");
@@ -99,7 +97,6 @@ export const capturePaypalPayment = async (req, res) => {
         return res.status(500).json({ success: false, message: "Payment execution failed." });
       }
 
-      // Determine amount paid based on paymentType
       let amountPaid;
       if (paymentType === "advance") {
         amountPaid = booking.advance || booking.wage;
@@ -109,7 +106,6 @@ export const capturePaypalPayment = async (req, res) => {
         return res.status(400).json({ success: false, message: "Invalid payment type in capture." });
       }
 
-      // Create payment record
       const paymentRecord = new Payment({
         bookingId: booking._id,
         clientId: booking.client,
@@ -132,11 +128,9 @@ export const capturePaypalPayment = async (req, res) => {
         booking.payments.push(paymentRecord._id);
       }
 
-      // Update booking with atomic transaction protection
       const session = await mongoose.startSession();
       try {
         await session.withTransaction(async () => {
-          // Reload booking within transaction to ensure we have latest state
           const latestBooking = await Booking.findById(booking._id).session(session);
           
           if (paymentType === "advance") {
@@ -164,7 +158,6 @@ export const capturePaypalPayment = async (req, res) => {
 
       const clientId = booking.client._id || booking.client;
 
-      // Notify client
       await createNotificationAndEmit({
         userId: clientId,
         userType: "Client",
@@ -174,7 +167,6 @@ export const capturePaypalPayment = async (req, res) => {
         paymentId: paymentRecord._id,
       });
 
-      // Notify artist
       await createNotificationAndEmit({
         userId: booking.artist,
         userType: "Artist",

@@ -16,7 +16,6 @@ const conversationSchema = new mongoose.Schema({
 },
 {timestamps: true}
 );
-// Optional index for faster lookup and to help avoid duplicates
 conversationSchema.index({ "members.userId": 1, "members.role": 1 }),
 { unique : false}
 

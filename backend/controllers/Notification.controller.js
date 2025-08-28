@@ -1,26 +1,20 @@
 
-// controllers/notification.controller.js
 import Notification from "../models/Notification.model.js";
 
-// Fetch notifications for logged-in user
 export const getNotifications = async (req, res) => {
   try {
     const { type = "all", page = 1, limit = 10 } = req.query;
 
     const query = {
       userId: req.user._id,
-      // userType: req.user.role,
     };
     
-    // Handle special filter cases
     if (type !== "all") {
       if (type === "cancellation") {
-        // For cancellation filter, match both cancellation-related types
         query.type = { 
           $in: ["booking_cancellation_request", "booking_cancellation_approval"] 
         };
       } else {
-        // For other filters, exact match
         query.type = type;
       }
     }
@@ -41,14 +35,12 @@ export const getNotifications = async (req, res) => {
 };
 
 
-// Mark notification as read with authorization check
 export const markAsRead = async (req, res) => {
   try {
     const notification = await Notification.findById(req.params.id);
     if (!notification)
       return res.status(404).json({ message: "Notification not found" });
 
-    // Only allow user owning notification to mark as read
     if (
       notification.userId.toString() !== req.user._id.toString() 
     ) {
@@ -63,7 +55,6 @@ export const markAsRead = async (req, res) => {
   }
 };
 
-// Create a new notification
 export const createNotification = async ({ userId, userType, message, type }) => {
   return await Notification.create({ userId, userType, message, type });
 };
