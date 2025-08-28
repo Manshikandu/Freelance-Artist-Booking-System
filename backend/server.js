@@ -42,12 +42,28 @@ const PORT = process.env.PORT;
 app.use(express.json());
 app.use(cookieParser());
 
-if(process.env.NODE_ENV === "development") {
+// if(process.env.NODE_ENV === "development") {
+// app.use(cors({
+//   origin: 'http://localhost:5173',
+//   credentials: true,
+// }));
+// }
+const allowedOrigins = [
+  "http://localhost:5173", // local dev
+  "https://freelance-artist-booking-system-11.onrender.com", // your frontend on Render
+];
+
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
 }));
-}
+
 
 app.get('/test', (req, res) => {
   res.json({ message: "Test route working" });
