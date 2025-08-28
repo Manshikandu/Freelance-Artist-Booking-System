@@ -82,13 +82,16 @@ app.use('/api/users/', UserChatProfile);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-if(process.env.NODE_ENV==="production")
-{
-    app.use(express.static(path.join(__dirname,"/frontend/dist")))
-    app.get(/.*/, (req,res) => {
-        res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
-    })
+if(process.env.NODE_ENV === "production") {
+    const frontendDistPath = path.join(__dirname, "../frontend/dist");
+
+    app.use(express.static(frontendDistPath));
+
+    app.get("*", (req, res) => {
+        res.sendFile(path.join(frontendDistPath, "index.html"));
+    });
 }
+
 
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
