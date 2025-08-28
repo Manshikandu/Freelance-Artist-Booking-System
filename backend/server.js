@@ -95,6 +95,9 @@ if(process.env.NODE_ENV === "production") {
     });
 }
 
+if (process.env.RENDER === "true") {
+  console.log("ENV Vars:", process.env);
+}
 
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
