@@ -2,7 +2,7 @@
 import JobPost from "../models/JobPost.model.js";
 import Artist from "../models/Artist.model.js";
 import { haversine } from "../utils/haversine.js";
-import { cosineSimilarity, tokenize } from "../utils/similarity.js";
+import { cosineSimilarity, tokenize } from "../utils/Similarity.js";
 
 export const getMatchingJobPostsForArtist = async (req, res) => {
   try {
