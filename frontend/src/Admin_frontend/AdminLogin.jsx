@@ -13,7 +13,7 @@ const AdminLogin = () => {
     setError("");
 
     try {
-      const { data } = await axios.post("http://localhost:3000/api/auth/Adminlogin", {
+      const { data } = await axios.post("http://localhost:3000/api/admin-auth/Adminlogin", {
         username,
         password,
       });

@@ -41,10 +41,13 @@ const PORT = process.env.PORT;
 
 app.use(express.json());
 app.use(cookieParser());
+
+if(process.env.NODE_ENV === "development") {
 app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true,
 }));
+}
 
 app.get('/test', (req, res) => {
   res.json({ message: "Test route working" });
@@ -64,7 +67,7 @@ app.use("/api", matchRoutes);
 app.use('/api/contracts', contractRoutes);
 app.use('/contracts', express.static(path.join(process.cwd(), 'contracts')));
 app.use("/api/geocode", geocodeRoute);
-app.use("/api/auth", AdminRoutes);
+app.use("/api/admin-auth", AdminRoutes);
 app.use("/api/admin", AdminRoutes);
 app.use("/api/clientprofile", ClientprofileRoutes);
 app.use("/api/verify", verifyRoutes);
