@@ -128,7 +128,7 @@ function App() {
 
 
           {/* //clientside booking */}
-          <Route path="/book" element={<ArtistBookingForm/>} />
+          <Route path="/book" element={<PrivateRoute><ArtistBookingForm/></PrivateRoute>} />
            <Route path="/my-bookings" element={<MyBookings/>} />
            <Route path="/booking/cancel/:bookingId" element={<CancelBooking />} />
 
