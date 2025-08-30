@@ -1,4 +1,9 @@
 import express from "express";
+// Allowed origins for CORS
+const allowedOrigins = [
+  "http://localhost:5173",
+  // "https://your-frontend-domain.com" // Add your deployed frontend URL here
+];
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -47,7 +52,7 @@ app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true,
 }));
-}
+
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -59,7 +64,7 @@ app.use(cors({
   },
   credentials: true,
 }));
-
+}
 
 app.get('/test', (req, res) => {
   res.json({ message: "Test route working" });
