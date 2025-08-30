@@ -4,6 +4,7 @@ import axios from "../lib/axios";
 import { toast } from "react-hot-toast";
 import { useUserStore } from "../stores/useUserStore";
 import { Search, Filter, MapPin, Clock, Star, TrendingUp } from "lucide-react";
+import ArtistNavbar from "./Artist/ArtistNavbar";
 
 const ArtistPostPage = () => {
   const { user } = useUserStore();
@@ -92,7 +93,7 @@ const ArtistPostPage = () => {
       );
     }
 
-    // Sort posts
+    
     switch (sortBy) {
       case "newest":
         filtered.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
@@ -121,7 +122,6 @@ const ArtistPostPage = () => {
       await axios.post(`/jobposts/${postId}/apply`, {}, { withCredentials: true });
       toast.success("Applied successfully!");
       
-      // Update applied posts and remove from available posts
       setAppliedPostIds(prev => new Set([...prev, postId]));
       setAllPosts(prev => prev.filter(p => p._id !== postId));
       setFilteredPosts(prev => prev.filter(p => p._id !== postId));
@@ -131,36 +131,20 @@ const ArtistPostPage = () => {
     }
   };
 
-  // Get unique categories for filter
+  
   const categories = [...new Set(allPosts.flatMap(post => post.artistType || []))];
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-100 font-sans">
-      {/* Navbar */}
-      <nav className="bg-white/80 backdrop-blur-sm shadow-lg border-b border-purple-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-3">
-              <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">
-                 Kala-Connect
-              </div>
-            </div>
-            <div className="flex gap-6 items-center text-purple-700">
-              <a href="/profile" className="hover:text-purple-900 transition-colors font-medium">Profile</a>
-              <a href="/applied-jobs" className="hover:text-purple-900 transition-colors font-medium">Applied Jobs</a>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <ArtistNavbar active="jobs" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header with Search and Filters */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-20">
+        
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-center bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent mb-6">
-            Discover Opportunities
-          </h1>
           
-          {/* Search and Filter Bar */}
+          
+         
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20">
             <div className="flex flex-wrap gap-4 items-center">
               {/* Search */}
@@ -177,7 +161,7 @@ const ArtistPostPage = () => {
                 </div>
               </div>
 
-              {/* Category Filter */}
+              
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
@@ -189,7 +173,7 @@ const ArtistPostPage = () => {
                 ))}
               </select>
 
-              {/* Sort */}
+             
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
@@ -200,7 +184,7 @@ const ArtistPostPage = () => {
                 <option value="closest">Closest Location</option>
               </select>
 
-              {/* Filter Toggle */}
+            
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className="flex items-center gap-2 px-4 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors"
@@ -210,7 +194,7 @@ const ArtistPostPage = () => {
               </button>
             </div>
 
-            {/* Advanced Filters */}
+          
             {showFilters && (
               <div className="mt-4 pt-4 border-t border-gray-200">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -255,7 +239,7 @@ const ArtistPostPage = () => {
           </div>
         ) : (
           <>
-            {/* Recommended Posts */}
+      
             {recommendedPosts.length > 0 && (
               <div className="mb-12">
                 <div className="flex items-center gap-3 mb-6">
@@ -287,7 +271,7 @@ const ArtistPostPage = () => {
               </div>
             )}
 
-            {/* All Posts */}
+          
             <div>
               <div className="flex items-center gap-3 mb-6">
                 <div className="bg-blue-100 p-3 rounded-xl">

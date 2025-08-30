@@ -110,43 +110,43 @@ const ArtistProfilee = () => {
       <ArtistNavbar active="profile" />
       <div className="pt-24 min-h-screen bg-gradient-to-br from-purple-200 to-purple-100 p-4">
         <div className="max-w-6xl mx-auto flex gap-5 bg-white rounded-xl shadow-md p-5">
-          {/* Sidebar */}
-          <div className="w-1/4 sticky top-24 h-max">
-            <div className="bg-purple-50 rounded-xl p-4 shadow-sm space-y-4">
-              <div className="text-center">
+         
+          <aside className="w-full sm:w-[280px] flex-shrink-0 sticky top-5 h-max" style={{ maxWidth: '100%' }}>
+            <div className="bg-purple-50 rounded-xl p-4 shadow-sm flex flex-col items-center">
+              <div className="text-center w-full">
                 <img
-                  src={artist.profilePicture?.url || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+                  src={artist.profilePicture?.url || artist.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
                   alt="profile"
                   className="w-24 h-24 rounded-full object-cover bg-gray-300 mx-auto"
                 />
                 <h1 className="text-xl font-bold mt-2">{artist.username}</h1>
-              </div>
-
-              <div className="flex flex-wrap justify-center gap-2 mt-2">
-                <span className="bg-rose-100 text-purple-700 px-3 py-1 rounded-full text-sm font-medium">
+                <span className="bg-rose-100 text-purple-700 px-3 py-1 rounded-full text-sm font-medium mt-1 inline-block">
                   {artist.category}
                 </span>
                 {artist.specialties?.map((s, i) => (
-                  <span key={i} className="bg-rose-100 text-purple-700 px-3 py-1 rounded-full text-sm font-medium">
+                  <span key={i} className="bg-rose-100 text-purple-700 px-3 py-1 rounded-full text-sm font-medium mt-1 inline-block">
                     {s}
                   </span>
                 ))}
               </div>
-
-              <div>
+              <div className="w-full flex flex-col items-center">
                 <div className="flex items-center gap-2 mb-2 mt-4">
                   <Calendar className="w-4 h-4 text-purple-600" />
                   <span className="font-semibold text-purple-600">Schedule</span>
                 </div>
-                <BookedDatesCalendar
-                  bookedSlots={bookedSlots}
-                  selectedDate={selectedDate}
-                  onDateChange={setSelectedDate}
-                  inline
-                />
+                <div className="w-full flex justify-center">
+                  <div className="w-full max-w-xs">
+                    <BookedDatesCalendar
+                      bookedSlots={bookedSlots}
+                      selectedDate={selectedDate}
+                      onDateChange={setSelectedDate}
+                      inline
+                    />
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </aside>
 
           {/* Main Content */}
           <div className="w-3/4">

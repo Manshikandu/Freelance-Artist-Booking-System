@@ -137,42 +137,37 @@ const ArtistsList = () => {
 
       let data = await res.json();
 
-      // Remove redundant frontend filtering - backend already handles budget filtering
-      // if (maxPrice) {
-      //   const max = parseInt(maxPrice);
-      //   data = data.filter((a) => (a.wage || a.ratePerHour || 0) <= max);
-      // }
+      
 
       if (sortBy === "price") {
         data.sort((a, b) => (a.wage || a.ratePerHour || 0) - (b.wage || b.ratePerHour || 0));
       } else if (sortBy === "distance") {
         data.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
       } else {
-        // For "match" sorting, prioritize budget-matching artists when budget is set
+        
         if (maxPrice) {
           const budget = parseInt(maxPrice);
           data.sort((a, b) => {
             const aPrice = a.wage || a.ratePerHour || 0;
             const bPrice = b.wage || b.ratePerHour || 0;
             
-            // Calculate how close each artist's price is to the budget
+           
             const aPriceDiff = Math.abs(aPrice - budget);
             const bPriceDiff = Math.abs(bPrice - budget);
             
-            // If both are within budget, prioritize the one closer to budget
+           
             if (aPrice <= budget && bPrice <= budget) {
               return aPriceDiff - bPriceDiff;
             }
             
-            // If only one is within budget, prioritize that one
+           
             if (aPrice <= budget && bPrice > budget) return -1;
             if (bPrice <= budget && aPrice > budget) return 1;
-            
-            // If both are over budget, use original score-based sorting
+          
             return b.score - a.score;
           });
         } else {
-          // Default: sort by matching score
+         
           data.sort((a, b) => b.score - a.score);
         }
       }
@@ -215,16 +210,16 @@ const ArtistsList = () => {
     setSortBy("match");
     setFiltersApplied(false);
     setSuggestions([]);
-    // Clear localStorage to remove persistent location
+    
     localStorage.removeItem("manualLocation");
-    // Reset to user's current location
+    
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
         toast.success("Reset to your current location");
       },
       () => {
-        // Fallback to Kathmandu if geolocation fails
+       
         setUserLocation({ lat: 27.7172, lng: 85.324 });
         toast.info("Reset to default location (Kathmandu)");
       }

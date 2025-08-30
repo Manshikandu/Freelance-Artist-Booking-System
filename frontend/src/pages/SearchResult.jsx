@@ -3,8 +3,11 @@
 import { useLocation, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "../lib/axios";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 const SearchResult = () => {
+   const navigate = useNavigate();
   const { search } = useLocation();
   const query = new URLSearchParams(search).get("query")?.toLowerCase() || "";
 
@@ -29,7 +32,15 @@ const SearchResult = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">
+         <button
+              onClick={() => navigate("/")}
+              className="fixed top-4 left-4 flex items-center gap-2 bg-purple-100 text-purple-600 hover:bg-purple-200 shadow-md rounded-md px-3 py-1.5 font-medium transition duration-300 ease-in-out cursor-pointer select-none"
+              title="Back to artist list"
+            >
+              <ArrowLeft className="w-8 h-8" />
+              Back
+            </button>
+      <h2 className="text-xl font-bold mb-4 flex justify-center">
         Search Results for "{query}"
       </h2>
 
