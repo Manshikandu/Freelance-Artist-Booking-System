@@ -22,7 +22,7 @@ const getArtistMatches = async (req, res) => {
   try {
     const { userLat, userLng, maxBudget, distanceLimit = 50, preferences = {}, categoryName } = req.body;
     
-    // Basic validation
+   
     if (!userLat || !userLng) {
       return res.status(400).json({ error: "User coordinates are required" });
     }
@@ -37,7 +37,7 @@ const getArtistMatches = async (req, res) => {
       return res.status(200).json([]);
     }
 
-    // Collect preference tags from user request
+    
     const preferenceTags = [
       ...(preferences.genres || []),
       ...(preferences.specialties || []),
@@ -124,3 +124,19 @@ const getArtistMatches = async (req, res) => {
   }
 };
 export { getArtistMatches };
+
+
+export const GetArtistProfile = async(req, res) => {
+    try{
+        const artist = await Artist.findById(req.params.id);
+        if(!artist)
+        {
+            return res.status(404).json({error: 'Not found'});
+        }
+        res.json(artist);
+    }
+    catch(error)
+    {
+        res.status(500).json({error: 'Fetch error'});
+    }
+};

@@ -1,9 +1,9 @@
 import express from "express";
 // Allowed origins for CORS
-// const allowedOrigins = [
-//   "http://localhost:5173",
-//   // "https://your-frontend-domain.com" // Add your deployed frontend URL here
-// ];
+const allowedOrigins = [
+  "http://localhost:5173",
+  // "https://your-frontend-domain.com" // Add your deployed frontend URL here
+];
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -17,7 +17,7 @@ import authRoutes from "./routes/auth.route.js";
 import JobPostRoutes from "./routes/Job.Post.route.js";
 
  import mediaRoutes from "./routes/media.js";
- import artistListRoutes from "./routes/Artist.List.route.js"
+//  import artistListRoutes from "./routes/Artist.List.route.js"
  import artistBookingRoutes from "./routes/artistSide/Booking.route.js";
  import AdminRoutes from "./Admin_Backend/Admin.route.js"
  import ClientprofileRoutes from "./routes/Clientprofile.route.js"
@@ -47,31 +47,35 @@ const PORT = process.env.PORT;
 app.use(express.json());
 app.use(cookieParser());
 
-const allowedOrigins = ['https://freelance-artist-booking-system-10.onrender.com'];
+//for deployment
+// const allowedOrigins = ['https://freelance-artist-booking-system-10.onrender.com'];
+
+
+// app.use(cors({
+//   origin: allowedOrigins,
+//   credentials: true
+// }));
+
+
+//for development
+if(process.env.NODE_ENV === "development") {
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}));
 
 
 app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
 }));
-// if(process.env.NODE_ENV === "development") {
-// app.use(cors({
-//   origin: 'http://localhost:5173',
-//   credentials: true,
-// }));
-
-
-// app.use(cors({
-//   origin: function (origin, callback) {
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error("Not allowed by CORS"));
-//     }
-//   },
-//   credentials: true,
-// }));
-// }
+}
 
 app.get('/test', (req, res) => {
   res.json({ message: "Test route working" });
@@ -81,7 +85,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/jobposts", JobPostRoutes);
 app.use("/api/media", mediaRoutes);
-app.use("/api/client/artists", artistListRoutes);
+// app.use("/api/client/artists", artistListRoutes);
 app.use("/api/artist/bookings", artistBookingRoutes);
 app.use('/contracts', express.static('contracts'));
 

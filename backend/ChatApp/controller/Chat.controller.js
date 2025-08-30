@@ -19,25 +19,6 @@ export const getMessages = async (req, res) => {
   }
 };
 
-export const sendMessage = async (req, res) => {
-  try {
-    const { conversationId, senderId, senderRole, receiverId, receiverRole, text, image } = req.body;
-    const newMessage = new ChatApp({
-      conversationId,
-      senderId,
-      senderRole,
-      receiverId,
-      receiverRole,
-      text,
-      image,
-    });
-    await newMessage.save();
-    res.status(201).json(newMessage);
-  } catch (error) {
-    console.log("Error in sendMessage:", error.message);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
 
 export const deleteMessage = async (req, res) => {
   try {

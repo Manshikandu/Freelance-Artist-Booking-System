@@ -23,7 +23,7 @@ import Review from '../../models/Review.model.js';
     }
 
     if (a.location?.city && b.location?.city && a.location.city === b.location.city) {
-      score += 0.4;
+      score += 0.2;
       breakdown.push(`Same city (${a.location.city}): +0.4`);
     } else {
       breakdown.push(`Different cities (${a.location?.city || 'unknown'} vs ${b.location?.city || 'unknown'}): +0`);
@@ -32,7 +32,7 @@ import Review from '../../models/Review.model.js';
     if (a.weightedRating != null && b.weightedRating != null) {
       const avgRating = (a.weightedRating + b.weightedRating) / 2;
       const normalized = avgRating / 5;
-      const ratingScore = 0.3 * normalized;
+      const ratingScore = 0.2 * normalized;
       score += ratingScore;
       breakdown.push(`Rating bonus (avg: ${avgRating.toFixed(2)}/5): +${ratingScore.toFixed(3)}`);
     } else {
@@ -149,26 +149,27 @@ import Review from '../../models/Review.model.js';
 
     const scores = [];
 
+    const maxPossibleSim = 1; 
     for (const other of otherArtists) {
       let totalScore = 0;
-      
       for (const booked of bookedArtists) {
         const similarity = computeArtistSimilarity(booked, other);
         totalScore += similarity;
       }
-      
-      console.log(`${other.username}: ${totalScore.toFixed(3)}`);
-      
+      const avgScore = totalScore / bookedArtists.length;
+      const normalizedScore = avgScore / maxPossibleSim; // 0-1 range
+      console.log(`${other.username}: total=${totalScore.toFixed(3)}, avg=${avgScore.toFixed(3)}, normalized=${normalizedScore.toFixed(3)}`);
       scores.push({ 
         artistId: other._id.toString(),
         username: other.username,
         score: totalScore,
+        avgScore,
+        normalizedScore,
         reason: 'Matches your style',
         algorithm: 'for-you'
       });
     }
-
-    scores.sort((a, b) => b.score - a.score);
+    scores.sort((a, b) => b.normalizedScore - a.normalizedScore);
     return scores.slice(0, limit);
   };
 
@@ -203,13 +204,14 @@ import Review from '../../models/Review.model.js';
         
         recommendations = [
           ...contentRecs.map(rec => {
-            const weightedScore = rec.score * 0.7;
-            console.log(`Content-based: ${rec.username || rec.artistId} - Original: ${rec.score.toFixed(3)} × 0.7 = ${weightedScore.toFixed(3)}`);
+            const weightedScore = rec.normalizedScore * 0.7;
+            console.log(`Content-based: ${rec.username || rec.artistId} - Normalized: ${rec.normalizedScore.toFixed(3)} × 0.7 = ${weightedScore.toFixed(3)}`);
             return { ...rec, weight: 0.7, finalScore: weightedScore };
           }),
           ...filteredCollaborativeRecs.slice(0, 3).map(rec => {
-            const weightedScore = rec.score * 0.3;
-            console.log(`Collaborative: ${rec.username || rec.artistId} - Original: ${rec.score.toFixed(3)} × 0.3 = ${weightedScore.toFixed(3)}`);
+            const collabNorm = rec.score > 1 ? 1 : rec.score;
+            const weightedScore = collabNorm * 0.3;
+            console.log(`Collaborative: ${rec.username || rec.artistId} - Normalized: ${collabNorm.toFixed(3)} × 0.3 = ${weightedScore.toFixed(3)}`);
             return { ...rec, weight: 0.3, finalScore: weightedScore };
           })
         ];
@@ -226,8 +228,14 @@ import Review from '../../models/Review.model.js';
         }
       });
 
-      const finalRecs = Array.from(uniqueRecs.values())
-        .sort((a, b) => (b.finalScore || b.score) - (a.finalScore || a.score))
+      const finalArr = Array.from(uniqueRecs.values());
+      const minFinal = Math.min(...finalArr.map(r => r.finalScore));
+      const maxFinal = Math.max(...finalArr.map(r => r.finalScore));
+      finalArr.forEach(r => {
+        r.normalizedFinalScore = (maxFinal - minFinal) > 0 ? (r.finalScore - minFinal) / (maxFinal - minFinal) : 0;
+      });
+      const finalRecs = finalArr
+        .sort((a, b) => b.normalizedFinalScore - a.normalizedFinalScore)
         .slice(0, 10);
         
       const artistIds = finalRecs.map(rec => rec.artistId);

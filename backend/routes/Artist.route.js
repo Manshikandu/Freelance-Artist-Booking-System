@@ -2,28 +2,19 @@ import express from 'express';
 import Artist from '../models/Artist.model.js';
 import {UpdateArtist,
         ArtistProfile,
-
         upload,
         getAllArtists
        
      } from '../controllers/Artist.controller.js';
 const router = express.Router();
 
-
 router.patch("/profile/:id", UpdateArtist);
 
-
 router.get('/profile/:id', ArtistProfile);  
-
 
 router.post('/upload-media', upload);   
 
 router.get("/artists", getAllArtists);
-
-
-
-
-
 
 
 router.get("/search", async (req, res) => {

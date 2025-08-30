@@ -8,9 +8,9 @@ const server = http.createServer(app);
 
 export const io = new Server(server, {
   cors: { origin: ["http://localhost:5173",  // local development
-    "https://freelance-artist-booking-system-10.onrender.com"    //deployment ma rakhekoo
+    // "https://freelance-artist-booking-system-10.onrender.com"    //deployment ma rakhekoo
   ], methods: ["GET", "POST"] ,
-  credentials: true,
+  // credentials: true,
   },
 });
 

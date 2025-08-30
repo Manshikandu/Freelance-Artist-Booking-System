@@ -1,6 +1,7 @@
 import express from "express";
-import { getArtistMatches } from "../../controllers/artistSide/ArtistMatch.controller.js";
+import { getArtistMatches,GetArtistProfile } from "../../controllers/artistSide/ArtistMatch.controller.js";
 
 const router = express.Router();
 router.post("/match-artists", getArtistMatches);
+router.get("/client/artists/profile/:id", GetArtistProfile);
 export default router;
