@@ -1,9 +1,9 @@
 import express from "express";
 // Allowed origins for CORS
-const allowedOrigins = [
-  "http://localhost:5173",
-  // "https://your-frontend-domain.com" // Add your deployed frontend URL here
-];
+// const allowedOrigins = [
+//   "http://localhost:5173",
+//   // "https://your-frontend-domain.com" // Add your deployed frontend URL here
+// ];
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -47,24 +47,31 @@ const PORT = process.env.PORT;
 app.use(express.json());
 app.use(cookieParser());
 
-if(process.env.NODE_ENV === "development") {
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true,
-}));
+const allowedOrigins = ['https://freelance-artist-booking-system-10.onrender.com'];
 
 
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
+  origin: allowedOrigins,
+  credentials: true
 }));
-}
+// if(process.env.NODE_ENV === "development") {
+// app.use(cors({
+//   origin: 'http://localhost:5173',
+//   credentials: true,
+// }));
+
+
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   credentials: true,
+// }));
+// }
 
 app.get('/test', (req, res) => {
   res.json({ message: "Test route working" });
