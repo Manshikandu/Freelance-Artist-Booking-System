@@ -13,7 +13,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import BookedDatesCalendar from "../components/BookedDatesCalendar";
 import MapPicker from "../components/MapPicker";
 import { toast } from "react-hot-toast";
-
+import bookingimage from "../assets/bookimage.png";  
 
 const steps = ["Set date", "Set Location", "Details", "Event Details", "Done"];
 
@@ -618,7 +618,7 @@ const ArtistBookingForm = () => {
       {/* Illustration on the Right */}
       <div className="hidden md:flex justify-center items-center md:ml-10">
         <img
-          src="/src/assets/book.png"
+          src={bookingimage}
           alt="Artist Booking"
           className="w-[300px] lg:w-[400px] object-contain"
         />
